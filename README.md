@@ -30,7 +30,7 @@ Tela de Login:
 ![Descrição da imagem](./src/assets/slide/login.png)
 
 Tela de Cadastro: 
-![Descrição da imagem](./src/assets/slide/signup.png)
+![Descrição da imagem](./src/assets/slide/singup.png)
 
 Dashboard: 
 ![Descrição da imagem](./src/assets/slide/dashboard.png)
@@ -66,6 +66,8 @@ A estrutura do projeto é organizada da seguinte forma:
 Certifique-se de ter o **Node.js** (versão 16 ou superior) e o **npm** instalados em sua máquina.
 
 ### Passos
+
+| Antes de começar o processo deve clonar e rodar o repositorio de Back-end: [https://github.com/resorgatto/gascontrol/blob/main/README.md](https://github.com/resorgatto/gascontrol/blob/main/README.md)
 
 1. Clone o repositório:
 
