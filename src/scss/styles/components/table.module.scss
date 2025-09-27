@@ -1,0 +1,286 @@
+$primary-dark: #1a1a2e;
+$secondary-dark: #16213e;
+$accent-blue: #0f3460;
+$text-light: #e6e6e6;
+$text-muted: #b3b3b3;
+$border-color: #2d3746;
+
+$breakpoint-md: 768px;
+$breakpoint-lg: 1024px;
+
+$spacing-xs: 0.5rem;
+$spacing-sm: 1rem;
+$spacing-md: 1.5rem;
+$spacing-lg: 2rem;
+$spacing-xl: 3rem;
+
+$border-radius: 8px;
+$border-radius-sm: 4px;
+
+.tableContainer {
+  background-color: $secondary-dark;
+  border-radius: $border-radius;
+  border: 1px solid $border-color;
+  margin-top: $spacing-lg;
+}
+
+.tableHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: $spacing-lg;
+  border-bottom: 1px solid $border-color;
+
+  @media (max-width: $breakpoint-md) {
+    flex-direction: column;
+    gap: $spacing-md;
+    align-items: flex-start;
+  }
+}
+
+.tableTitle {
+  margin: 0;
+  font-size: 1.3rem;
+  font-weight: 500;
+  color: $text-light;
+}
+
+.tableControls {
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+
+  @media (max-width: $breakpoint-md) {
+    width: 100%;
+    flex-direction: column;
+  }
+}
+
+.searchBox {
+  position: relative;
+  display: flex;
+  align-items: center;
+
+  @media (max-width: $breakpoint-md) {
+    width: 100%;
+  }
+}
+
+.searchInput {
+  background-color: $primary-dark;
+  border: 1px solid $border-color;
+  border-radius: $border-radius;
+  padding: $spacing-xs $spacing-md $spacing-xs $spacing-xl;
+  color: $text-light;
+  font-size: 0.9rem;
+  width: 250px;
+
+  @media (max-width: $breakpoint-md) {
+    width: 100%;
+  }
+
+  &::placeholder {
+    color: $text-muted;
+  }
+
+  &:focus {
+    outline: none;
+    border-color: $accent-blue;
+  }
+}
+
+.searchIcon {
+  position: absolute;
+  left: $spacing-sm;
+  color: $text-muted;
+  font-size: 0.9rem;
+}
+
+.tableInfo {
+  color: $text-muted;
+  font-size: 0.9rem;
+}
+
+// Wrapper da Tabela
+.tableWrapper {
+  overflow-x: auto;
+  max-width: 100%;
+}
+
+.dataTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.tableHeaderCell {
+  background-color: rgba($accent-blue, 0.3);
+  padding: $spacing-md;
+  text-align: left;
+  font-weight: 600;
+  color: $text-light;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  border-bottom: 1px solid $border-color;
+
+  &:hover {
+    background-color: rgba($accent-blue, 0.5);
+  }
+}
+
+.headerCellContent {
+  display: flex;
+  align-items: center;
+  gap: $spacing-xs;
+}
+
+.tableRow {
+  border-bottom: 1px solid $border-color;
+  transition: background-color 0.3s ease;
+
+  &:hover {
+    background-color: rgba($accent-blue, 0.1);
+  }
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.tableCell {
+  padding: $spacing-md;
+  color: $text-light;
+  border-bottom: 1px solid $border-color;
+}
+
+// Estilos para informações do usuário
+.userInfo {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+}
+
+.avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, $accent-blue, $primary-dark);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: $text-light;
+}
+
+// Badges de status
+.statusBadge {
+  padding: $spacing-xs $spacing-sm;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.statusActive {
+  background-color: rgba(16, 185, 129, 0.2);
+  color: #10b981;
+}
+
+.statusInactive {
+  background-color: rgba(239, 68, 68, 0.2);
+  color: #ef4444;
+}
+
+.statusPending {
+  background-color: rgba(245, 158, 11, 0.2);
+  color: #f59e0b;
+}
+
+.currencyValue {
+  font-weight: 600;
+  color: #10b981;
+}
+
+// Botões de ação
+.actionButtons {
+  display: flex;
+  gap: $spacing-xs;
+}
+
+.actionBtn {
+  background: rgba($accent-blue, 0.3);
+  border: 1px solid $border-color;
+  border-radius: $border-radius-sm;
+  padding: $spacing-xs;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  color: $text-light;
+  font-size: 0.8rem;
+
+  &:hover {
+    background: rgba($accent-blue, 0.5);
+    transform: translateY(-1px);
+  }
+}
+
+// Paginação
+.pagination {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: $spacing-md $spacing-lg;
+  border-top: 1px solid $border-color;
+
+  @media (max-width: $breakpoint-md) {
+    flex-direction: column;
+    gap: $spacing-md;
+  }
+}
+
+.paginationBtn {
+  background: rgba($accent-blue, 0.3);
+  border: 1px solid $border-color;
+  border-radius: $border-radius-sm;
+  padding: $spacing-xs $spacing-sm;
+  color: $text-light;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 0.9rem;
+
+  &:hover:not(:disabled) {
+    background: rgba($accent-blue, 0.5);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.paginationPages {
+  display: flex;
+  gap: $spacing-xs;
+}
+
+.paginationPage {
+  background: transparent;
+  border: 1px solid $border-color;
+  border-radius: $border-radius-sm;
+  padding: $spacing-xs $spacing-sm;
+  color: $text-light;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 0.9rem;
+  min-width: 40px;
+
+  &:hover {
+    background: rgba($accent-blue, 0.3);
+  }
+
+  &.active {
+    background: $accent-blue;
+    border-color: $accent-blue;
+  }
+}

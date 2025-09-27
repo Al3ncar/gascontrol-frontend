@@ -1,0 +1,88 @@
+const inputFormData = (inputsValue: any, handleInputChange: any) => [
+  {
+    title: "Informações Pessoais",
+    className: "info",
+    children: [
+      {
+        label: "Nome Completo: ",
+        type: "text",
+        name: "name",
+        placeholder: "Nome...",
+        id: "fullName",
+        value: inputsValue.fullName,
+        onChange: (e: any) => handleInputChange(e),
+      },
+      {
+        label: "Relação com Imovél: ",
+        type: "text",
+        name: "email",
+        placeholder: "exemplo@gmail.com",
+        id: "relation",
+        value: inputsValue.relation,
+        onChange: (e: any) => handleInputChange(e),
+      },
+    ],
+  },
+  {
+    title: "Informações do Imovél",
+    className: "info",
+    children: [
+      {
+        label: "Nome do Condominio: ",
+        type: "text",
+        name: "name",
+        placeholder: "Nome do Condominio...",
+        id: "condominiumName",
+        value: inputsValue.condominiumName,
+        onChange: (e: any) => handleInputChange(e),
+      },
+      {
+        label: "Localização do Condominio: ",
+        type: "text",
+        name: "name",
+        placeholder: "Cidade, UF...",
+        id: "condominiumLocation",
+        value: inputsValue.condominiumLocation,
+        onChange: (e: any) => handleInputChange(e),
+      },
+      {
+        label: "Identificação da Torre: ",
+        type: "text",
+        name: "name",
+        placeholder: "Nome da torre...",
+        id: "tower",
+        value: inputsValue.tower,
+        onChange: (e: any) => handleInputChange(e),
+      },
+      {
+        label: "Numero da Torre: ",
+        type: "text",
+        name: "name",
+        placeholder: "Numero Torre...",
+        id: "numberTower",
+        value: inputsValue.numberTower,
+        onChange: (e: any) => handleInputChange(e),
+      },
+      {
+        label: "Identificação do Apartamento: ",
+        type: "text",
+        name: "name",
+        placeholder: "Identificação...",
+        id: "apartmentId",
+        value: inputsValue.apartmentId,
+        onChange: (e: any) => handleInputChange(e),
+      },
+      {
+        label: "Codigo do Gasometro: ",
+        type: "text",
+        name: "name",
+        placeholder: "Codigo...",
+        id: "gasometerCode",
+        value: inputsValue.gasometerCode,
+        onChange: (e: any) => handleInputChange(e),
+      },
+    ],
+  },
+];
+
+export default inputFormData;

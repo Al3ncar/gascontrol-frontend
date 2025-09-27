@@ -1,0 +1,96 @@
+@import "../../globals/variables";
+
+.dashboard {
+  background-color: red !important;
+  padding: $spacing-lg;
+  background-color: $primary-dark;
+  min-height: 100vh;
+  color: $text-light;
+}
+
+.dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: $spacing-xl;
+
+  @media (max-width: $breakpoint-md) {
+    flex-direction: column;
+    gap: $spacing-md;
+    align-items: flex-start;
+  }
+}
+
+.title {
+  font-size: 2rem;
+  font-weight: 300;
+  margin: 0;
+  color: $text-light;
+}
+
+.filters {
+  display: flex;
+  gap: $spacing-xs;
+  background-color: $secondary-dark;
+  padding: $spacing-xs;
+  border-radius: $border-radius;
+}
+
+.filter-btn {
+  padding: $spacing-xs $spacing-md;
+  border: none;
+  background: transparent;
+  color: $text-muted;
+  border-radius: $border-radius-sm;
+  cursor: pointer;
+  transition: all 0.3s ease;
+
+  &:hover {
+    color: $text-light;
+    background-color: rgba(255, 255, 255, 0.1);
+  }
+
+  &.active {
+    background-color: $accent-blue;
+    color: $text-light;
+  }
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: $spacing-md;
+  margin-bottom: $spacing-xl;
+}
+
+.charts-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: $spacing-lg;
+
+  @media (max-width: $breakpoint-lg) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.chart-container {
+  width: 100%;
+  background-color: #fff;
+  padding: $spacing-lg;
+  border-radius: $border-radius;
+  box-shadow: 0px 0px 4px 1px rgba(0, 0, 0, 0.144);
+  
+  &:hover {
+    cursor: pointer;
+    transform: translateY(-5px);
+    transition: ease-in-out 0.3s;
+    box-shadow: 0px 0px 5px 2px rgba(0, 0, 0, 0.357);
+  }
+}
+
+.chart-title {
+  margin: 0 0 $spacing-md 0;
+  font-size: 1.2rem;
+  font-weight: 500;
+  color: $text-light;
+}

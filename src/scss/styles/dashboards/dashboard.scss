@@ -1,0 +1,178 @@
+$dark-blue: #1a2035;
+$black: #0d1117;
+$dark-gray: #2d3748;
+$light-gray: #4a5568;
+$accent-blue: #2563eb;
+$accent-light: #3b82f6;
+$white: #ffffff;
+$success: #10b981;
+$danger: #ef4444;
+$background: #f8fafc;
+
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@mixin card-shadow {
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+@mixin hover-effect {
+  transition: all 0.3s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+}
+
+.dashboard-layout {
+  display: flex;
+  min-height: 100vh;
+  background-color: $background;
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+  position: relative;
+}
+
+// Painel principal
+.main-panel {
+  flex: 2;
+  width: 60% !important;
+  padding: 0;
+  margin-left: 15%;
+  display: flex;
+  flex-direction: column;
+}
+
+.panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24px 32px;
+  background: $white;
+  border-bottom: 1px solid rgba($black, 0.1);
+
+  h1 {
+    color: $dark-blue;
+    font-size: 28px;
+    font-weight: 700;
+    margin: 0;
+  }
+}
+
+.header-actions {
+  display: flex;
+  gap: 12px;
+}
+
+// Botões
+.btn-primary {
+  background: $accent-blue;
+  color: $white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s ease;
+
+  &:hover {
+    background: $accent-light;
+    transform: translateY(-1px);
+  }
+}
+
+.btn-secondary {
+  background: $light-gray;
+  color: $white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s ease;
+
+  &:hover {
+    background: $dark-gray;
+    transform: translateY(-1px);
+  }
+}
+
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 24px;
+  padding: 32px;
+}
+
+// Abas de conteúdo
+.content-tabs {
+  display: flex;
+  border-bottom: 1px solid rgba($black, 0.1);
+  padding: 0 32px;
+  margin-bottom: 0;
+}
+
+.tab {
+  padding: 16px 24px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  border-bottom: 3px solid transparent;
+  font-weight: 600;
+  color: $light-gray;
+  transition: all 0.3s ease;
+
+  &.active {
+    border-bottom-color: $accent-blue;
+    color: $accent-blue;
+  }
+
+  &:hover {
+    color: $dark-blue;
+  }
+}
+
+.tab-content {
+  flex: 1;
+  flex-wrap: wrap;
+  padding: 32px;
+  display: flex;
+  gap: 24px;
+}
+
+// Responsividade
+@media (max-width: 1024px) {
+  .chat-system {
+    flex-direction: column;
+    height: auto;
+  }
+
+  .metrics-grid {
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 16px;
+    padding: 24px;
+  }
+}
+
+@media (max-width: 768px) {
+  .sidebar {
+    width: 70px;
+
+    &.closed {
+      width: 70px;
+    }
+  }
+
+  .panel-header {
+    flex-direction: column;
+    gap: 16px;
+    align-items: flex-start;
+  }
+
+  .metrics-grid {
+    grid-template-columns: 1fr;
+  }
+}
