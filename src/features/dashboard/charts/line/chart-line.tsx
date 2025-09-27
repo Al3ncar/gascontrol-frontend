@@ -8,7 +8,7 @@ import "../../../../scss/styles/components/charts.scss"
 const LineChart = ({ title, data }) => {
   const options = {
     title: {
-      text: title,
+      text: "",
       align: "left",
     },
     yAxis: {

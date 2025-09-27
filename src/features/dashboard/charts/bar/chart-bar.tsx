@@ -10,7 +10,7 @@ const BarChart = ({ title, data }) => {
       type: "column",
     },
     title: {
-      text: title,
+      text: "",
       align: "left",
     },
     xAxis: {

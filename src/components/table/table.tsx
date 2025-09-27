@@ -1,12 +1,11 @@
-import React, { useState, useMemo } from "react";
+import { useState, useMemo } from "react";
 import styles from "../../scss/styles/components/table.module.scss";
 
-const DataTable = ({ data, itemsPerPage = 10 }) => {
+const DataTable = ({ data, dataHead, itemsPerPage = 10 }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [sortConfig, setSortConfig] = useState({ key: null, direction: "asc" });
   const [searchTerm, setSearchTerm] = useState("");
 
-  // Dados mockados (você pode substituir pelos seus próprios dados)
   const defaultData = [
     {
       id: 1,
@@ -105,10 +104,8 @@ const DataTable = ({ data, itemsPerPage = 10 }) => {
       data: "2024-01-04",
     },
   ];
-
   const tableData = data || defaultData;
 
-  // Filtragem dos dados
   const filteredData = useMemo(() => {
     if (!searchTerm) return tableData;
 
@@ -119,7 +116,6 @@ const DataTable = ({ data, itemsPerPage = 10 }) => {
     );
   }, [tableData, searchTerm]);
 
-  // Ordenação dos dados
   const sortedData = useMemo(() => {
     if (!sortConfig.key) return filteredData;
 
@@ -134,14 +130,12 @@ const DataTable = ({ data, itemsPerPage = 10 }) => {
     });
   }, [filteredData, sortConfig]);
 
-  // Paginação
   const totalPages = Math.ceil(sortedData.length / itemsPerPage);
   const currentData = sortedData.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
 
-  // Função para ordenar
   const handleSort = (key) => {
     setSortConfig({
       key,
@@ -152,32 +146,28 @@ const DataTable = ({ data, itemsPerPage = 10 }) => {
     });
   };
 
-  // Função para mudar página
   const goToPage = (page) => {
     setCurrentPage(Math.max(1, Math.min(page, totalPages)));
   };
 
-  // Função para renderizar o ícone de ordenação
   const renderSortIcon = (key) => {
     if (sortConfig.key !== key) return "↕";
     return sortConfig.direction === "asc" ? "↑" : "↓";
   };
 
-  // Função para formatar status
   const getStatusClass = (status) => {
     switch (status) {
-      case "Ativo":
-        return styles.statusActive;
-      case "Inativo":
-        return styles.statusInactive;
-      case "Pendente":
-        return styles.statusPending;
+      case "DONO":
+        return styles.statusDONO;
+      case "INQUILINO":
+        return styles.statusINQUILINO;
+      case "MORADOR":
+        return styles.statusMORADOR;
       default:
         return "";
     }
   };
 
-  // Função para formatar valor monetário
   const formatCurrency = (value) => {
     return new Intl.NumberFormat("pt-BR", {
       style: "currency",
@@ -185,14 +175,12 @@ const DataTable = ({ data, itemsPerPage = 10 }) => {
     }).format(value);
   };
 
-  // Função para formatar data
   const formatDate = (dateString) => {
     return new Date(dateString).toLocaleDateString("pt-BR");
   };
 
   return (
     <div className={styles.tableContainer}>
-      {/* Header da Tabela com Busca */}
       <div className={styles.tableHeader}>
         <h3 className={styles.tableTitle}>Dados da Tabela</h3>
         <div className={styles.tableControls}>
@@ -207,16 +195,15 @@ const DataTable = ({ data, itemsPerPage = 10 }) => {
             <span className={styles.searchIcon}>🔍</span>
           </div>
           <div className={styles.tableInfo}>
-            {sortedData.length} itens encontrados
+            Itens encontrados: {sortedData.length}
           </div>
         </div>
       </div>
 
-      {/* Tabela */}
       <div className={styles.tableWrapper}>
         <table className={styles.dataTable}>
           <thead>
-            <tr>
+            {/* <tr>
               <th
                 className={styles.tableHeaderCell}
                 onClick={() => handleSort("id")}
@@ -268,6 +255,26 @@ const DataTable = ({ data, itemsPerPage = 10 }) => {
               <th className={styles.tableHeaderCell}>
                 <div className={styles.headerCellContent}>Ações</div>
               </th>
+            </tr> */}
+            <tr>
+              {dataHead.map((coluna) => (
+                <th
+                  key={coluna.chave}
+                  className={styles.tableHeaderCell}
+                  onClick={
+                    coluna.sortable ? () => handleSort(coluna.chave) : undefined
+                  }
+                  style={{
+                    width: coluna.width,
+                    textAlign: coluna.align || "left",
+                  }}
+                >
+                  <div className={styles.headerCellContent}>
+                    {coluna.label}
+                    {coluna.sortable && renderSortIcon(coluna.chave)}
+                  </div>
+                </th>
+              ))}
             </tr>
           </thead>
           <tbody>
@@ -286,22 +293,16 @@ const DataTable = ({ data, itemsPerPage = 10 }) => {
                     {item.nome}
                   </div>
                 </td>
-                <td className={styles.tableCell}>{item.email}</td>
                 <td className={styles.tableCell}>
                   <span
                     className={`${styles.statusBadge} ${getStatusClass(
-                      item.status
+                      item.tipo
                     )}`}
                   >
-                    {item.status}
+                    {item.tipo}
                   </span>
                 </td>
-                <td className={styles.tableCell}>
-                  <span className={styles.currencyValue}>
-                    {formatCurrency(item.valor)}
-                  </span>
-                </td>
-                <td className={styles.tableCell}>{formatDate(item.data)}</td>
+                <td className={styles.tableCell}>{item.apartamento}</td>
                 <td className={styles.tableCell}>
                   <div className={styles.actionButtons}>
                     <button className={styles.actionBtn} title="Editar">
@@ -309,9 +310,6 @@ const DataTable = ({ data, itemsPerPage = 10 }) => {
                     </button>
                     <button className={styles.actionBtn} title="Excluir">
                       🗑️
-                    </button>
-                    <button className={styles.actionBtn} title="Visualizar">
-                      👁️
                     </button>
                   </div>
                 </td>
@@ -321,7 +319,6 @@ const DataTable = ({ data, itemsPerPage = 10 }) => {
         </table>
       </div>
 
-      {/* Paginação */}
       {totalPages > 1 && (
         <div className={styles.pagination}>
           <button

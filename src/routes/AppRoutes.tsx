@@ -5,7 +5,7 @@ import ProtectedRoute from "./ProtectedRoute";
 import LoginPage from "../features/auth/pages/LoginPage";
 import SignUp from "../features/auth/pages/SignUp";
 import Empty from "../components/empty/empty";
-
+// import GasControlSystem from "../components/registerGasometros/register";
 // import DashboardPage from '@/features/dashboard/pages/DashboardPage'
 // import MetersPage from '@/features/meters/pages/MetersPage'
 // import ReadingsPage from '@/features/readings/pages/ReadingsPage'
@@ -55,8 +55,6 @@ export const AppRoutes = () => {
             }
           />
           <Route path="/signup" element={<SignUp />} />
-          {/* 11111111111111111111111 */}
-
           <Route
             path="/dashboards"
             element={

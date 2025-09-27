@@ -10,7 +10,7 @@ const AreaChart = ({ title, data }) => {
       type: "areaspline",
     },
     title: {
-      text: title,
+      text: "",
       align: "left",
     },
     xAxis: {

@@ -11,7 +11,7 @@ const PieChart = ({ title, data }) => {
       type: "pie",
     },
     title: {
-      text: title,
+      text: "",
       align: "left",
     },
     series: [
@@ -48,7 +48,6 @@ const PieChart = ({ title, data }) => {
       <div className="chart-header">
         <h3>{title}</h3>
       </div>
-
       <div className="chart-wrapper">
         <HighchartsReact highcharts={Highcharts} options={options} />
       </div>
