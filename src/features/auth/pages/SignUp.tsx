@@ -19,7 +19,6 @@ export default function LoginPage() {
       apartmentId: "",
       tower: "",
       numberTower: "",
-      block: "",
       condominiumName: "",
       condominiumLocation: "",
       gasometerCode: "",
@@ -104,7 +103,7 @@ export default function LoginPage() {
   ) => {
     const data = { nome: fullName, tipo: relation, apartamento: apartmentId };
     try {
-      return await sendAxiosApi("post", data, "usuarios");
+      return await sendAxiosApi("post", data, "pessoas");
     } catch (error) {
       const newShowNotif: any = {
         type: "waring",
@@ -134,6 +133,10 @@ export default function LoginPage() {
     }
   };
 
+  const backLogin = () => {
+    location.href = "/login";
+  };
+
   const loadCloseNotification = () => {
     setTimeout(() => {
       const newShowNotif: any = {
@@ -147,8 +150,6 @@ export default function LoginPage() {
     const inputValues = inputsValue[0];
     for (const key in inputValues) {
       if (inputValues[key as keyof typeof inputValues] === "") {
-        console.log(key);
-
         const validateKey: any = {
           fullName: "NOME COMPLETO",
           relation: "RELAÇÃO COM IMOVÉL",
@@ -186,6 +187,7 @@ export default function LoginPage() {
       } = inputsValue[0];
 
       if (verifyEmptyInputs()) return;
+      console.log("testando");
 
       const responseCondominiumData = await sendCondominiumData(
         condominiumName,
@@ -207,8 +209,16 @@ export default function LoginPage() {
       );
 
       await sendGasometerData(gasometerCode, responseUserData.id);
-
-      console.log("Dados enviados com sucesso!");
+      const newShowNotif: any = {
+        type: "success",
+        text: `Dados enviados com sucesso!`,
+        show: true,
+      };
+      setShowNotif(newShowNotif);
+      
+      setTimeout(() => {
+        backLogin();
+      }, 2000);
     } catch (error) {
       console.error("Erro ao enviar dados para a API:", error);
     } finally {
@@ -286,6 +296,7 @@ export default function LoginPage() {
                               placeholder={data.placeholder}
                               id={data.id}
                               onChange={data.onChange}
+                              maxLength={data.maxLength}
                             />
                           )}
                         </div>
