@@ -51,6 +51,7 @@ const inputFormData = (inputsValue: any, handleInputChange: any) => [
         name: "name",
         placeholder: "Nome da torre...",
         id: "tower",
+        maxLength: 10,
         value: inputsValue.tower,
         onChange: (e: any) => handleInputChange(e),
       },
