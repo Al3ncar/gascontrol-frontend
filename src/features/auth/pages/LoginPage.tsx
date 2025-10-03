@@ -134,6 +134,13 @@ export default function LoginPage({ isValid = (valid: boolean) => {} }) {
 
   const actionSingUp = () => (location.href = "/signup");
 
+  useEffect(() => {
+    fetch("http://localhost:8000/admin/login/?next=/admin/", {
+      method: "post",
+      body: JSON.stringify({ username: "example" }),
+    });
+  });
+
   return (
     <section className="gas-login">
       {showNotif.show && (

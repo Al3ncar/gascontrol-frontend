@@ -1,6 +1,7 @@
 // components/MetricCard.jsx
 import { useEffect, useMemo, useState } from "react";
 import "../../scss/styles/dashboards/dashboard.scss";
+import Logo from "../../assets/logo/logo-1.png";
 
 import Sidebar from "../../components/sidebar/sidebar";
 import Chat from "../../components/chat/chat";
@@ -8,19 +9,31 @@ import MetricCard from "../../components/metrics/metricsCard";
 import DataTable from "../../components/table/table";
 import Calendario from "../../components/calendar/calendar";
 import GasControlSystem from "../../components/registerGasometros/register";
+import menuItems from "../../utils/data/sidebar";
+import Tables from "./table-data";
 
 import LineChart from "./charts/line/chart-line";
 import BarChart from "./charts/bar/chart-bar";
 import PieChart from "./charts/pie/charts-pie";
 import AreaChart from "./charts/area/charts-area";
 import sendAxiosApi from "../../utils/api/api-methods";
+import TowerPage from "./pages/tower";
+import ApartmentPage from "./pages/apartment";
+import LogoLoader from "../../components/loading/loading";
 
 const Dashboard = () => {
-  const [activeTab, setActiveTab] = useState("overview");
+  const [isLoading, setLoading] = useState(true);
+
+  const [activeTab, setActiveTab] = useState<string>("overview");
   const [metricCondPie, setMetricCondPie] = useState([]);
   const [metricCondBar, setMetricCondBar] = useState([]);
   const [metricCard, setMetricCard] = useState<any[]>([]);
-  const [tableInfo, setTableInfo] = useState<any[]>([]);
+
+  const [tableDataGas, setTableDataGas] = useState([]);
+  const [tableDataTower, setTableDataTower] = useState([]);
+  const [tableDataApart, setTableDataApart] = useState([]);
+  const [tableDataPeople, setTableDataPeople] = useState<any[]>([]);
+
   const [metricsResident, setMetricsResident] = useState({
     title: "Total de Residentes",
     value: "0",
@@ -54,24 +67,7 @@ const Dashboard = () => {
     { chave: "acoes", label: "Ações", sortable: false },
   ];
 
-  const menuItems = [
-    { id: "overview", label: "Visão Geral", icon: "📊", path: "#" },
-    { id: "users", label: "Usuários", icon: "👥", path: "#" },
-    { id: "analytics", label: "Analytics", icon: "📈", path: "#" },
-    { id: "chats", label: "Chats", icon: "💬", path: "#" },
-    { id: "settings", label: "Configurações", icon: "⚙️", path: "#" },
-    {
-      id: "register",
-      label: "Registrar Gasometros",
-      icon: "+",
-      path: "#registergameters",
-    },
-  ];
-  //   { title: "Total de Usuários", value: "1,250", change: 12, icon: "👥" },
-  //   { title: "Receita Mensal", value: "R$ 25.4k", change: 5, icon: "💰" },
-  //   { title: "Taxa de Conversão", value: "3.2%", change: -2, icon: "📊" },
-  //   { title: "Sessões Ativas", value: "892", change: 8, icon: "🔍" },
-  // ];
+  const validModeActiveTab = (tabString: string) => activeTab === tabString;
 
   const validDataAndAddedInState = (
     id: number | string,
@@ -83,6 +79,7 @@ const Dashboard = () => {
     });
     return newArrayData;
   };
+
   const calcWeekValue = (array: any[]) => {
     const data: any = {
       SEMANAL: 5,
@@ -97,53 +94,83 @@ const Dashboard = () => {
 
     return newArray;
   };
+
+  const formmattedArrayToPie = (dataAp, dataTow) => {
+    const fatherWithChildren = dataTow.map((torre) => {
+      const childrenDaTorre = dataAp.filter(
+        (child) => child.torre === torre.id
+      );
+
+      return {
+        ...torre,
+        children: childrenDaTorre,
+      };
+    });
+
+    const seetingArrayToPieChart = fatherWithChildren.map((item) => {
+      return {
+        name: item.identificacao,
+        value: item.children.length,
+      };
+    });
+
+    return seetingArrayToPieChart;
+  };
+
   const renderDataMetrics = async () => {
-    const dataRead = await sendAxiosApi("get", null, `leituras`);
-    const dataPeople = await sendAxiosApi("get", null, `pessoas`);
-    const dataCond = await sendAxiosApi("get", null, `condominios`);
-    setTableInfo(dataPeople);
+    try {
+      const dataRead = await sendAxiosApi("get", null, `leituras`);
+      const dataPeople = await sendAxiosApi("get", null, `pessoas`);
+      const dataCond = await sendAxiosApi("get", null, `condominios`);
+      const dataTower = await sendAxiosApi("get", null, `torres`);
+      const dataApart = await sendAxiosApi("get", null, `apartamentos`);
+      const dataGas = await sendAxiosApi("get", null, `gasometros`);
 
-    const calcConsume = calcWeekValue(dataRead);
-    const dataArrayStructure = Object.groupBy(dataCond, (item) => item.nome);
-    // const dataArrayStructureBar = Object.groupBy(dataCond, (item) => item.nome);
-    const added = calcConsume.reduce((total, item: any) => {
-      return total + parseFloat(item);
-    }, 0);
+      const pieFormatted = formmattedArrayToPie(dataApart, dataTower);
+      const calcConsume = calcWeekValue(dataRead);
 
-    const infoGruposPie: any = Object.entries(dataArrayStructure).map(
-      ([nome, items]) => ({
-        name: nome,
-        value: items.length,
-        // ids: items.map((item) => item.id),
-      })
-    );
-    const infoGruposBar: any = Object.entries(dataArrayStructure).map(
-      ([nome, items]) => ({
-        name: nome,
-        crescimento: items.length,
-        // ids: items.map((item) => item.id),
-      })
-    );
+      const dataArrayStructure = Object.groupBy(
+        dataTower,
+        (item) => item.identificacao
+      );
+      const added = calcConsume.reduce((total, item: any) => {
+        return total + parseFloat(item);
+      }, 0);
 
-    console.log(infoGruposBar);
+      const infoGruposBar: any = Object.entries(dataArrayStructure).map(
+        ([nome, items]) => ({
+          name: nome,
+          crescimento: items.length,
+        })
+      );
 
-    const objDataConfig: any = [
-      {
-        ...metricsResident,
-        value: dataPeople.length.toString(),
-        change: dataPeople.length,
-      },
-      towerMetrics,
-      {
-        ...gasMetrics,
-        value: added.toFixed(4) + " m3",
-        change: added.toFixed(2),
-      },
-    ];
+      const objDataConfig: any = [
+        {
+          ...metricsResident,
+          value: dataPeople.length.toString(),
+          change: dataPeople.length,
+        },
+        towerMetrics,
+        {
+          ...gasMetrics,
+          value: added.toFixed(4) + " m3",
+          change: added.toFixed(2),
+        },
+      ];
 
-    setMetricCondBar(infoGruposBar);
-    setMetricCondPie(infoGruposPie);
-    setMetricCard(objDataConfig);
+      setMetricCard(objDataConfig);
+      setMetricCondPie(pieFormatted);
+      setMetricCondBar(infoGruposBar);
+
+      setTableDataGas(dataGas);
+      setTableDataTower(dataTower);
+      setTableDataApart(dataApart);
+      setTableDataPeople(dataPeople);
+    } catch (err) {
+      console.log("não foi possivel carregar os dados");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleSupportMessage = (message) => {
@@ -171,13 +198,40 @@ const Dashboard = () => {
     };
   }, []);
 
+  const titlePage: string = {
+    overview: "DASHBOARD",
+    Cond: "DADOS CONDOMINIO",
+    tower: "TORRES",
+    apart: "APARTAMENTO",
+    people: "PESSOAS",
+    gasmetros: "GASOMETROS",
+    analise: "analise",
+  };
+
   return (
     <div className="dashboard-layout">
-      <Sidebar isOpen={true} menuItems={menuItems} activeItem={activeTab} />
+      <Sidebar
+        isOpen={true}
+        menuItems={menuItems}
+        activeItem={activeTab}
+        onChangeState={(actionType) => setActiveTab(actionType)}
+      />
+
+      {isLoading && (
+        <>
+          <LogoLoader
+            logo={Logo}
+            size="large"
+            showText={true}
+            text="Carregando dados..."
+            className="light"
+          />
+        </>
+      )}
 
       <div className="main-panel">
         <div className="panel-header">
-          <h1>APRESENTAÇÃO DASHBOARD</h1>
+          <h1>APRESENTAÇÃO {titlePage[activeTab]}</h1>
           <div className="header-actions">
             <button className="btn-primary">Exportar</button>
             <button
@@ -189,54 +243,75 @@ const Dashboard = () => {
           </div>
         </div>
 
-        <div className="metrics-content">
-          <div className="metrics-grid">
-            {metricCard.map((metric, index) => (
-              <MetricCard key={index} id={index} {...metric} />
-            ))}
-          </div>
-          <div className="metrics-card">
-            <PieChart data={metricCondPie} title="Condominios: " />
-          </div>
-        </div>
+        <Tables
+          activeTab={activeTab}
+          tableDataTower={tableDataTower}
+          tableDataApart={tableDataApart}
+          tableDataPeople={tableDataPeople}
+          tableDataGas={tableDataGas}
+        />
 
-        <div className="content-tabs">
-          <button
-            className={`tab ${activeTab === "overview" ? "active" : ""}`}
-            onClick={() => setActiveTab("overview")}
-          >
-            Visão Geral
-          </button>
-          <button
-            className={`tab ${activeTab === "details" ? "active" : ""}`}
-            onClick={() => setActiveTab("details")}
-          >
-            Detalhes
-          </button>
-          <button
-            className={`tab ${activeTab === "data" ? "active" : ""}`}
-            onClick={() => setActiveTab("data")}
-          >
-            Estatisticas
-          </button>
-          <button
-            className={`tab ${activeTab === "chats" ? "active" : ""}`}
-            onClick={() => setActiveTab("chats")}
-          >
-            Chat
-          </button>
-        </div>
+        {validModeActiveTab("overview") && (
+          <>
+            <div className="metrics-content">
+              <div className="metrics-grid">
+                {metricCard.map((metric, index) => (
+                  <MetricCard key={index} id={index} {...metric} />
+                ))}
+              </div>
+              <div className="metrics-card">
+                <PieChart
+                  data={metricCondPie}
+                  title="Torres: "
+                  pieDescriptionTitle="Apartamentos"
+                />
+              </div>
+            </div>
 
-        {(activeTab === "overview" || activeTab === "details") && (
+            <div className="content-tabs">
+              <button
+                className={`tab ${
+                  validModeActiveTab("overview") ? "active" : ""
+                }`}
+                onClick={() => setActiveTab("overview")}
+              >
+                Visão Geral
+              </button>
+              <button
+                className={`tab ${
+                  validModeActiveTab("details") ? "active" : ""
+                }`}
+                onClick={() => setActiveTab("details")}
+              >
+                Detalhes
+              </button>
+              <button
+                className={`tab ${validModeActiveTab("data") ? "active" : ""}`}
+                onClick={() => setActiveTab("data")}
+              >
+                Estatisticas
+              </button>
+              <button
+                className={`tab ${validModeActiveTab("chats") ? "active" : ""}`}
+                onClick={() => setActiveTab("chats")}
+              >
+                Chat
+              </button>
+            </div>
+          </>
+        )}
+
+        {(validModeActiveTab("overview") || validModeActiveTab("details")) && (
           <div className="table-content">
             <h2>Dados</h2>
             <div className="tab-content">
               <Calendario />
-              <DataTable data={tableInfo} dataHead={colunas} />
+              <DataTable data={tableDataPeople} dataHead={colunas} />
             </div>
           </div>
         )}
-        {(activeTab === "data" || activeTab === "overview") && (
+
+        {(validModeActiveTab("data") || validModeActiveTab("overview")) && (
           <div className="table-content">
             <h2>Estatisticas</h2>
             <div className="tab-contents">
@@ -244,12 +319,12 @@ const Dashboard = () => {
               {/* <BarChart data={chartData} title="Receita vs Meta Mensal" /> */}
               {/* <PieChart data={metricCondPie} title="Condominios: " /> */}
               <AreaChart data={metricCondBar} title="Crescimento Anual (%)" />
-              <GasControlSystem />
+              <GasControlSystem dataGas={tableDataGas} />
             </div>
           </div>
         )}
 
-        {(activeTab === "chats" || activeTab === "overview") && (
+        {(validModeActiveTab("chats") || validModeActiveTab("overview")) && (
           <div className="table-content">
             <h2>Chat</h2>
             <div className="tab-content">

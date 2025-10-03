@@ -64,6 +64,11 @@ export const AppRoutes = () => {
             }
           />
 
+          {/* 
+            User: admin123
+            password: admin123admin123
+          */}
+
           {showNot && !isValidWelcome && <Route path="*" element={<Empty />} />}
         </Routes>
       </BrowserRouter>

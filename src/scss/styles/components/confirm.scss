@@ -1,0 +1,137 @@
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-confirmacao {
+  background: white;
+  border-radius: 12px;
+  padding: 32px;
+  width: 100%;
+  max-width: 400px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  text-align: center;
+  animation: modal-appear 0.2s ease-out;
+
+  .modal-icon {
+    font-size: 64px;
+    margin-bottom: 20px;
+    line-height: 1;
+  }
+
+  .modal-titulo {
+    font-size: 20px;
+    font-weight: 600;
+    margin: 0 0 16px 0;
+    color: #333;
+  }
+
+  .modal-mensagem {
+    font-size: 16px;
+    line-height: 1.5;
+    margin: 0 0 32px 0;
+    color: #666;
+  }
+
+  .modal-footer {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+
+    .btn {
+      padding: 12px 24px;
+      border: none;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      min-width: 100px;
+
+      &:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
+
+      &.btn-cancelar {
+        background-color: #f5f5f5;
+        color: #333;
+        
+        &:hover:not(:disabled) {
+          background-color: #e0e0e0;
+        }
+      }
+
+      &.btn-confirmar {
+        color: white;
+        
+        &.modal-tipo-info {
+          background-color: #1890ff;
+          
+          &:hover:not(:disabled) {
+            background-color: #40a9ff;
+          }
+        }
+        
+        &.modal-tipo-success {
+          background-color: #52c41a;
+          
+          &:hover:not(:disabled) {
+            background-color: #73d13d;
+          }
+        }
+        
+        &.modal-tipo-warning {
+          background-color: #faad14;
+          
+          &:hover:not(:disabled) {
+            background-color: #ffc53d;
+          }
+        }
+        
+        &.modal-tipo-danger {
+          background-color: #ff4d4f;
+          
+          &:hover:not(:disabled) {
+            background-color: #ff7875;
+          }
+        }
+      }
+    }
+  }
+}
+
+.loading-spinner {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 2px solid transparent;
+  border-top: 2px solid currentColor;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-right: 8px;
+}
+
+@keyframes modal-appear {
+  from {
+    opacity: 0;
+    transform: scale(0.9) translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}

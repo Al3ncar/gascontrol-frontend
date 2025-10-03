@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const sendAxiosApi = async (
-  type: "post" | "get" | "put",
+  type: "post" | "get" | "put" | "delete",
   data: any,
   link: string
 ) => {
@@ -21,9 +21,10 @@ const sendAxiosApi = async (
 };
 
 const axiosMethods = {
-  post: (link: string, data: any) => axios.post(link, data),
   get: (link: string) => axios.get(link),
+  delete: (link: string) => axios.delete(link),
   put: (link: string, data: any) => axios.put(link, data),
+  post: (link: string, data: any) => axios.post(link, data),
 };
 
 export default sendAxiosApi;

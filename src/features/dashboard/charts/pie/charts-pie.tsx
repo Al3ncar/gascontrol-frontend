@@ -2,10 +2,9 @@
 import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
 import "../charts-config";
-import "../../../../scss/styles/components/charts.scss"
+import "../../../../scss/styles/components/charts.scss";
 
-
-const PieChart = ({ title, data }) => {
+const PieChart = ({ title, data, pieDescriptionTitle = "Dispositivos" }) => {
   const options = {
     chart: {
       type: "pie",
@@ -16,7 +15,7 @@ const PieChart = ({ title, data }) => {
     },
     series: [
       {
-        name: "Dispositivos",
+        name: pieDescriptionTitle,
         data: data.map((item, index) => ({
           name: item.name,
           y: item.value,

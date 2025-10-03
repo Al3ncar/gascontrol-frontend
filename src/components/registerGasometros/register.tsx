@@ -3,7 +3,7 @@ import "../../scss/styles/components/gasregister.scss";
 import { GiGasPump } from "react-icons/gi";
 import { PiBuildings } from "react-icons/pi";
 
-const GasControlSystem = () => {
+const GasControlSystem = ({ dataGas }) => {
   const [formData, setFormData] = useState({
     gasometer: "",
     readingDate: "",
@@ -26,16 +26,7 @@ const GasControlSystem = () => {
   const fetchGasometers = async () => {
     try {
       setIsLoading(true);
-      const response = await fetch(
-        `${apiConfig.baseUrl}${apiConfig.endpoints.gasometers}`
-      );
-
-      if (!response.ok) {
-        throw new Error(`Erro HTTP: ${response.status}`);
-      }
-
-      const gasometersData = await response.json();
-      setGasometers(gasometersData);
+      setGasometers(dataGas);
     } catch (error) {
       console.error("Erro ao carregar gasômetros:", error);
       showMessage("Erro ao carregar a lista de gasômetros.", "error");
