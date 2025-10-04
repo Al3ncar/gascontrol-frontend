@@ -3,6 +3,7 @@ import styles from "../../scss/styles/components/table.module.scss";
 import EmptySlot from "../emptySlot/emptySlot";
 import ModalConfirm from "../confirm/confirm";
 import sendAxiosApi from "../../utils/api/api-methods";
+import EditModal from "../modal/modal";
 
 const DataTable = ({
   type = "default",
@@ -19,10 +20,14 @@ const DataTable = ({
 
   const [isModalConfirm, setModalConfirm] = useState(false);
   const [isModalData, setModalData] = useState([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingData, setEditingData] = useState(null);
+
+  const [modalInputs, setModalInputs] = useState([]);
 
   const typeTable: string = {
     overview: "",
-    // Cond: "condominio",
+    cond: "condominio",
     tower: "torres",
     apartment: "apartamento",
     people: "pessoas",
@@ -51,6 +56,147 @@ const DataTable = ({
       return 0;
     });
   }, [filteredData, sortConfig]);
+
+  const modalFields = {
+    tower: [
+      {
+        key: "identificacao",
+        label: "Identificação: ",
+        type: "text",
+        typeRender: "torres",
+      },
+      {
+        key: "numero",
+        label: "Numero: ",
+        type: "number",
+        typeRender: "torres",
+      },
+      {
+        key: "condominioName",
+        label: "Condominio: ",
+        type: "text",
+        typeRender: "torres",
+      },
+    ],
+    apartment: [
+      {
+        key: "numero",
+        label: "Numero: ",
+        type: "number",
+        typeRender: "apartamentos",
+      },
+      {
+        key: "torre",
+        label: "ID Torre: ",
+        type: "text",
+        typeRender: "apartamentos",
+      },
+    ],
+    people: [
+      {
+        key: "nome",
+        label: "Nome:",
+        type: "text",
+        typeRender: "pessoas",
+      },
+      {
+        key: "tipo",
+        label: "Relação com imovel: ",
+        type: "text",
+        typeRender: "pessoas",
+      },
+      {
+        key: "apartamento",
+        label: "Apartamento: ",
+        type: "text",
+        typeRender: "pessoas",
+      },
+    ],
+    gasmetros: [
+      {
+        key: "codigo",
+        label: "Codigo:",
+        type: "text",
+        typeRender: "gasometros",
+      },
+      {
+        key: "apartamento",
+        label: "ID do Apartamento: ",
+        type: "number",
+        typeRender: "gasometros",
+      },
+    ],
+  };
+
+  const handleEditClick = (rowData) => {
+    setEditingData(rowData);
+    setIsModalOpen(true);
+  };
+
+  const handleConfirmEdit = (updatedData) => {
+    console.log("updatedData", updatedData);
+    // const getDataOpen = currentData.find((item) => item.id === Number(id));
+
+    const typeApis: string = {
+      condominio: "condominio",
+      torres: "torres",
+      apartamentos: "apartamentos",
+      pessoas: "pessoas",
+      gasometros: "gasometros",
+    };
+
+    const newUpdated = updatedData.map((item) => {
+      if (typeApis[updatedData[0].typeRender] === "torres") {
+        return {
+          identificacao: item.identificacao,
+          numero: item.numero,
+          condominio: Number(item.condominio),
+        };
+      } else if (typeApis[updatedData[0].typeRender] === "apartamentos") {
+        return {
+          torre: Number(item.torre),
+          numero: item.numero,
+        };
+      } else if (typeApis[updatedData[0].typeRender] === "pessoas") {
+        return {
+          nome: item.nome,
+          tipo: item.tipo,
+          apartamento: item.apartamento,
+        };
+      } else if (typeApis[updatedData[0].typeRender] === "gasometros") {
+        return {
+          codigo: item.codigo,
+          apartamento: item.apartamento,
+        };
+      } else return;
+    });
+    console.log("newUpdated", newUpdated);
+
+    const linkApi = `${typeApis[updatedData[0].typeRender]}/${
+      updatedData[0].id
+    }`;
+    editData(newUpdated[0], linkApi);
+  };
+
+  const editData = async (dataApi, link) => {
+    const response = await sendAxiosApi("put", dataApi, link);
+
+    const newTable = tableDataArray.map((item) => {
+      if (item.id === response.id) {
+        return {
+          ...item,
+          ...response,
+        };
+      }
+      return item;
+    });
+    setTableDataArray(newTable);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setEditingData(null);
+  };
 
   const totalPages = Math.ceil(sortedData.length / itemsPerPage);
   const currentData = sortedData.slice(
@@ -91,16 +237,16 @@ const DataTable = ({
     }
   };
 
-  const formatCurrency = (value) => {
-    return new Intl.NumberFormat("pt-BR", {
-      style: "currency",
-      currency: "BRL",
-    }).format(value);
-  };
+  // const formatCurrency = (value) => {
+  //   return new Intl.NumberFormat("pt-BR", {
+  //     style: "currency",
+  //     currency: "BRL",
+  //   }).format(value);
+  // };
 
-  const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleDateString("pt-BR");
-  };
+  // const formatDate = (dateString) => {
+  //   return new Date(dateString).toLocaleDateString("pt-BR");
+  // };
 
   const openConfirmDelete = (e) => {
     const { id } = e.target;
@@ -112,15 +258,24 @@ const DataTable = ({
     console.log(id);
     console.log(getDataOpen);
   };
+
   const openConfirmEdit = (e) => {
     const { id } = e.target;
-
     const getDataOpen = currentData.find((item) => item.id === Number(id));
-    // setModalData(getDataOpen);
-    // setModalConfirm(!!getDataOpen);
 
-    // console.log(id);
-    // console.log(getDataOpen);
+    const dataFieds = modalFields[type].map((item) => {
+      console.log(item);
+      return {
+        ...item,
+        ...getDataOpen,
+        [item.key]: getDataOpen[item.key],
+        id: Number(id),
+      };
+    });
+
+    setIsModalOpen(true);
+    setModalInputs(dataFieds);
+    console.log("getDataOpen", getDataOpen);
   };
 
   const deleteDataTable = async (e) => {
@@ -160,12 +315,19 @@ const DataTable = ({
         </div>
       </div>
 
+      <EditModal
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+        onConfirm={handleConfirmEdit}
+        data={editingData}
+        fields={modalInputs}
+      />
+
       <ModalConfirm
         isOpen={isModalConfirm}
         onClose={() => setModalConfirm(false)}
         tipo="danger"
         onConfirm={() => deleteDataTable()}
-        // mensagem={}
       />
 
       <div className={styles.tableWrapper}>
@@ -315,6 +477,73 @@ const DataTable = ({
         </table>
       </div>
 
+      {/* {totalPages > 1 && (
+        <div className={styles.pagination}>
+          <button
+            className={styles.paginationBtn}
+            onClick={() => currentPage > 1 && goToPage(currentPage - 1)}
+            disabled={currentPage === 1}
+          >
+            ← Anterior
+          </button>
+
+          <div className={styles.paginationPages}>
+            {(() => {
+              // Lógica para determinar quais páginas mostrar
+              let startPage, endPage;
+
+              if (totalPages <= 5) {
+                // Menos de 5 páginas: mostra todas
+                startPage = 1;
+                endPage = totalPages;
+              } else {
+                // Mais de 5 páginas: lógica de páginação
+                if (currentPage <= 3) {
+                  startPage = 1;
+                  endPage = 5;
+                } else if (currentPage >= totalPages - 2) {
+                  startPage = totalPages - 4;
+                  endPage = totalPages;
+                } else {
+                  startPage = currentPage - 2;
+                  endPage = currentPage + 2;
+                }
+              }
+
+              // Cria array de páginas
+              const pages = [];
+              for (let i = startPage; i <= endPage; i++) {
+                pages.push(i);
+              }
+
+              return pages.map((pageNum) => (
+                <button
+                  key={pageNum}
+                  className={`${styles.paginationPage} ${
+                    currentPage === pageNum ? styles.active : ""
+                  }`}
+                  onClick={() => goToPage(pageNum)}
+                >
+                  {pageNum}
+                </button>
+              ));
+            })()}
+          </div>
+
+          <button
+            className={styles.paginationBtn}
+            onClick={() =>
+              currentPage < totalPages && goToPage(currentPage + 1)
+            }
+            disabled={currentPage === totalPages}
+          >
+            Próxima →
+          </button>
+        </div>
+
+
+      )} */}
+
       {totalPages > 1 && (
         <div className={styles.pagination}>
           <button
@@ -324,6 +553,7 @@ const DataTable = ({
           >
             ← Anterior
           </button>
+
           <div className={styles.paginationPages}>
             {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
               let pageNum;
@@ -336,6 +566,7 @@ const DataTable = ({
               } else {
                 pageNum = currentPage - 2 + i;
               }
+
               return (
                 <button
                   key={pageNum}
@@ -349,6 +580,7 @@ const DataTable = ({
               );
             })}
           </div>
+
           <button
             className={styles.paginationBtn}
             onClick={() => goToPage(currentPage + 1)}
