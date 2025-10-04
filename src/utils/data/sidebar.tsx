@@ -33,13 +33,13 @@ const menuItems = [
   {
     id: "gasmetros",
     label: "Gasometros",
-    icon: "🏘️",
+    icon: "⛽",
     path: "/condominio/blocos",
   },
   {
-    id: "analise ",
-    label: "Análise",
-    icon: "📈",
+    id: "cadastrar",
+    label: "Cadastrar",
+    icon: "➕",
     path: "/analise",
   },
 ];

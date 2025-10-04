@@ -5,8 +5,10 @@ import GasLogo from "../../../assets/logo/logo-1.png";
 import sendAxiosApi from "../../../utils/api/api-methods";
 import inputFormData from "../../../utils/data/sign-data";
 import Notification from "../../../components/notification/notification";
+import ProgressSteps from "../../../components/progress/progress";
 
-export default function LoginPage() {
+export default function Signup({ inputCond }) {
+  const [idApiResponse, setIdApiResponse] = useState();
   const [showNotif, setShowNotif] = useState({
     type: "waring",
     text: "Exemplo de texto",
@@ -37,6 +39,14 @@ export default function LoginPage() {
     gasometerCode: null,
   });
 
+  const stapsTitle = {
+    1: "TORRES",
+    2: "APARTAMENTOS",
+    3: "PESSOAS",
+    4: "GASOMETROS",
+    5: "LEITURAS",
+  };
+
   const submitForm = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
   };
@@ -45,6 +55,8 @@ export default function LoginPage() {
     const { id, value } = e.target;
     const newInputsValue = inputsValue.slice()[0];
     newInputsValue[id] = value;
+
+    console.log(newInputsValue);
     setInputsValue([newInputsValue]);
   };
 
@@ -173,6 +185,101 @@ export default function LoginPage() {
     }
   };
 
+  const successNotification = () => {
+    const newShowNotif: any = {
+      type: "success",
+      text: `Dados enviados com sucesso!`,
+      show: true,
+    };
+    setShowNotif(newShowNotif);
+  };
+
+  const stapsSand = async () => {
+    const {
+      fullName,
+      relation,
+      apartmentId,
+      tower,
+      numberTower,
+      condominiumName,
+      condominiumLocation,
+      gasometerCode,
+    } = inputsValue[0];
+
+    switch (stapsTitle[currentStep]) {
+      case "TORRES":
+        try {
+          const responseTowerData = await sendTowerData(
+            numberTower,
+            tower,
+            inputCond[0].id
+          );
+          setIdApiResponse(responseTowerData);
+          successNotification();
+          setCurrentStep(currentStep + 1);
+        } catch (err) {
+          console.log("err", err);
+        } finally {
+          loadCloseNotification();
+          console.log(inputsValue);
+          setInputsValue(inputsValue);
+        }
+
+        return;
+
+      case "APARTAMENTOS":
+        try {
+          const responseApartmentData = await sendApartmentData(
+            apartmentId,
+            idApiResponse.id
+          );
+
+          setIdApiResponse(responseApartmentData);
+          successNotification();
+          setCurrentStep(currentStep + 1);
+        } catch (err) {
+          console.log("err", err);
+        } finally {
+          loadCloseNotification();
+        }
+
+        return;
+      case "PESSOAS":
+        try {
+          const responseUserData = await sendUserData(
+            fullName,
+            relation,
+            idApiResponse.id
+          );
+
+          setIdApiResponse(responseUserData);
+          successNotification();
+          setCurrentStep(currentStep + 1);
+        } catch (err) {
+          console.log("err", err);
+        } finally {
+          loadCloseNotification();
+        }
+
+        return;
+      case "GASOMETROS":
+        try {
+          await sendGasometerData(gasometerCode, idApiResponse.id);
+          successNotification();
+          setCurrentStep(currentStep + 1);
+        } catch (err) {
+          console.log("err", err);
+        } finally {
+          loadCloseNotification();
+        }
+        return;
+
+      default:
+        window.location.reload();
+        return;
+    }
+  };
+
   const sendDataApi = async () => {
     try {
       const {
@@ -186,8 +293,7 @@ export default function LoginPage() {
         gasometerCode,
       } = inputsValue[0];
 
-      if (verifyEmptyInputs()) return;
-      console.log("testando");
+      await stapsSand();
 
       const responseCondominiumData = await sendCondominiumData(
         condominiumName,
@@ -215,7 +321,7 @@ export default function LoginPage() {
         show: true,
       };
       setShowNotif(newShowNotif);
-      
+
       setTimeout(() => {
         backLogin();
       }, 2000);
@@ -224,6 +330,33 @@ export default function LoginPage() {
     } finally {
       loadCloseNotification();
     }
+  };
+
+  const [currentStep, setCurrentStep] = useState(1);
+  const totalSteps = 5;
+
+  const handleNext = () => {
+    if (currentStep <= totalSteps) {
+      const sendDataApi = async () => {
+        await stapsSand();
+      };
+      sendDataApi();
+    }
+  };
+
+  const handlePrev = () => {
+    if (currentStep > 1) {
+      setCurrentStep(currentStep - 1);
+    }
+  };
+
+  const renderSteps = (input, indes) => {
+    const renderPage = input.children.filter((data, index) => {
+      return data?.staps === currentStep ? data : null;
+    });
+
+    console.log("nput.children", input.children);
+    return renderPage;
   };
 
   return (
@@ -239,86 +372,116 @@ export default function LoginPage() {
           className="gas-signup__boxs--form"
           onSubmit={(e) => submitForm(e)}
         >
-          <h2>Cadastro</h2>
+          <h2>CADASTRO {stapsTitle[currentStep]}</h2>
+          <ProgressSteps
+            currentStep={currentStep}
+            totalSteps={totalSteps}
+            showLabels={true}
+            labels={[
+              "Torres",
+              "Pessoas",
+              "Apartamentos",
+              "Gasometros",
+              "Confirmação",
+            ]}
+          />
           <div className="gas-signup__boxs--form--signup">
             {inputFormData(inputsValue, handleInputChange).map(
               (input, index) => (
                 <Fragment key={index}>
-                  <h3>{input.title}</h3>
                   <div
                     className={`gas-signup__boxs--form--signup--${input.className}`}
                   >
-                    {input.children.map((data: any, index) => (
-                      <div
-                        key={index}
-                        onClick={() => refs.current[data.id].focus()}
-                        className={`gas-signup__boxs--form--signup--${classType(
-                          data.name
-                        )}`}
-                      >
-                        <div
-                          className={`gas-signup__boxs--form--signup--${classType(
-                            data.name
-                          )}--divisor`}
-                        ></div>
-                        <div
-                          className={`gas-signup__boxs--form--signup--${classType(
-                            data.name
-                          )}--input`}
-                        >
-                          <label htmlFor={`${classType(data.name)}`}>
-                            {classType(data.label)}{" "}
-                          </label>
-                          {data.label === "Relação com Imovél: " ? (
-                            <div className="select-wrapper">
-                              <select
-                                name="relation"
-                                id="relation"
-                                onChange={data.onChange}
-                                value={data.value}
-                              >
-                                <option value="" disabled selected>
-                                  Selecione
-                                </option>
-                                <option value="DONO" className="props">
-                                  Dono/Dona
-                                </option>
-                                <option value="MORADOR">Morador</option>
-                                <option value="INQUILINO">Inquilino</option>
-                              </select>
+                    {input.children.map((data: any, index) => {
+                      console.log(input.children);
+                      if (data.staps === currentStep)
+                        return (
+                          <div
+                            key={index}
+                            onClick={() => refs.current[data.id].focus()}
+                            className={`gas-signup__boxs--form--signup--${classType(
+                              data.name
+                            )}`}
+                          >
+                            <div
+                              className={`gas-signup__boxs--form--signup--${classType(
+                                data.name
+                              )}--divisor`}
+                            ></div>
+                            <div
+                              className={`gas-signup__boxs--form--signup--${classType(
+                                data.name
+                              )}--input`}
+                            >
+                              <label htmlFor={`${classType(data.name)}`}>
+                                {classType(data.label)}{" "}
+                              </label>
+
+                              {data?.children && data?.children.length > 0 ? (
+                                <>
+                                  <div className="select-wrapper">
+                                    <select
+                                      name="relation"
+                                      id="relation"
+                                      onChange={data.onChange}
+                                      value={data.value}
+                                    >
+                                      {data?.children.map((child) => (
+                                        <option
+                                          value={child.value}
+                                          className="props"
+                                        >
+                                          {child.label}
+                                        </option>
+                                      ))}
+                                    </select>
+                                  </div>
+                                </>
+                              ) : (
+                                <>
+                                  {data.staps === currentStep && (
+                                    <div>
+                                      <input
+                                        ref={(el: any) =>
+                                          (refs.current[data.id] = el)
+                                        }
+                                        value={inputsValue[data.value]}
+                                        type={data.type}
+                                        name={data.name}
+                                        placeholder={data.placeholder}
+                                        id={data.id}
+                                        onChange={data.onChange}
+                                        maxLength={data.maxLength}
+                                      />
+                                    </div>
+                                  )}
+                                </>
+                              )}
                             </div>
-                          ) : (
-                            <input
-                              ref={(el: any) => (refs.current[data.id] = el)}
-                              value={data.value}
-                              type={data.type}
-                              name={data.name}
-                              placeholder={data.placeholder}
-                              id={data.id}
-                              onChange={data.onChange}
-                              maxLength={data.maxLength}
-                            />
-                          )}
-                        </div>
-                      </div>
-                    ))}
+                          </div>
+                        );
+                    })}
                   </div>
                 </Fragment>
               )
             )}
           </div>
           <div className="gas-signup__boxs--form--signup--send">
+            <button
+              onClick={() => handlePrev()}
+              disabled={currentStep < totalSteps && currentStep === 1}
+            >
+              Voltar
+            </button>
             <input
               type="submit"
-              value="Cadastrar"
-              onClick={() => sendDataApi()}
+              value={
+                currentStep >= totalSteps ? "Finalizar Cadastro" : "Proximo"
+              }
+              onClick={() => handleNext()}
             />
-            <button onClick={() => (location.href = "/")}>Entrar</button>
           </div>
         </form>
-        <div className="gas-signup__boxs--description">
-          <img src={GasLogo} alt="Gas Control Logo" />
-        </div>
       </div>
     </section>
   );

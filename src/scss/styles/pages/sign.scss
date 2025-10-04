@@ -6,23 +6,11 @@
     width: 100%;
     height: 100%;
     display: flex;
+    align-items: center;
+    justify-content: center;
     overflow: hidden;
     box-shadow: 0px 0px 8px 2px #0000001c;
-
-    &--description {
-      width: 50%;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding-left: 3%;
-      background-image: url("https://i.pinimg.com/1200x/69/55/3e/69553e53ff1c0433bb23a50561665c74.jpg");
-      background-size: cover;
-
-      img {
-        filter: brightness(0) invert(1);
-        width: 70%;
-      }
-    }
+    background-size: cover;
 
     &--form {
       width: 70%;
@@ -92,7 +80,6 @@
               position: relative;
               width: 100%;
 
-
               select {
                 width: 100%;
                 padding: 2% 5% 2% 0;
@@ -100,7 +87,7 @@
                 border: none;
                 color: #011e9c;
                 background-color: #ffffff;
-                appearance: none; 
+                appearance: none;
                 cursor: pointer;
                 transition: all 0.3s ease;
                 background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23666' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
@@ -108,7 +95,6 @@
                 background-position: right 16px center;
                 background-size: 16px;
 
-           
                 &:focus {
                   outline: none;
                 }
@@ -131,7 +117,6 @@
               height: 100%;
               font-size: 0.8vw;
               padding-right: 3%;
-
             }
             input {
               padding-top: 2%;
@@ -178,13 +163,15 @@
         // }
 
         &--send {
-          width: 90%;
+          width: 100%;
           display: flex;
+          justify-content: space-between;
           margin-top: 2%;
           gap: 2%;
+
           input {
             cursor: pointer;
-            width: 60%;
+            width: 50%;
             padding: 2%;
             margin-top: 4%;
             font-size: 1vw;
@@ -208,18 +195,23 @@
 
           button {
             cursor: pointer;
-            width: 30%;
+            width: 50%;
             padding: 2%;
             margin-top: 4%;
             font-size: 1vw;
-            background-color: white !important;
-            border: 2px solid #001b90;
+            background-color: rgb(98, 98, 98) !important;
+            border: none;
             border-radius: 0.4vw;
-            color: #001b90;
+            color: #fff;
 
             &:hover {
               font-weight: bolder;
               transform: scale(1.02);
+            }
+
+            &:disabled {
+              background-color: rgb(194, 194, 194) !important;
+              cursor: not-allowed;
             }
           }
         }

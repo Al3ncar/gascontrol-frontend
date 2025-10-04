@@ -19,11 +19,14 @@ import sendAxiosApi from "../../utils/api/api-methods";
 import TowerPage from "./pages/tower";
 import ApartmentPage from "./pages/apartment";
 import LogoLoader from "../../components/loading/loading";
+import Signup from "../auth/pages/SignUp";
 
 const Dashboard = () => {
   const [isLoading, setLoading] = useState(true);
 
+  const [inputDataCond, setInputDataCond] = useState([]);
   const [activeTab, setActiveTab] = useState<string>("overview");
+
   const [metricCondPie, setMetricCondPie] = useState([]);
   const [metricCondBar, setMetricCondBar] = useState([]);
   const [metricCard, setMetricCard] = useState<any[]>([]);
@@ -33,38 +36,33 @@ const Dashboard = () => {
   const [tableDataApart, setTableDataApart] = useState([]);
   const [tableDataPeople, setTableDataPeople] = useState<any[]>([]);
 
-  const [metricsResident, setMetricsResident] = useState({
-    title: "Total de Residentes",
-    value: "0",
-    change: 0,
-    icon: "🏠",
-  });
-  const [gasMetrics, setGasMetrics] = useState({
-    title: "Total Consumo de Gasometro por Mês: ",
-    value: "0 m3",
-    change: 0,
-    icon: "📊",
-  });
-  const [towerMetrics, setTowerMetrics] = useState({
-    title: "Sessões Ativas: ",
-    value: "5",
-    change: 5,
-    icon: "🔍",
-  });
+  const [metricsResident, gasMetrics, towerMetrics] = [
+    {
+      title: "Total de Residentes",
+      value: "0",
+      change: 0,
+      icon: "🏠",
+    },
+    {
+      title: "Total Consumo de Gasometro por Mês: ",
+      value: "0 m3",
+      change: 0,
+      icon: "📊",
+    },
+    {
+      title: "Sessões Ativas: ",
+      value: "5",
+      change: 5,
+      icon: "🔍",
+    },
+  ];
+
   const [supportChat, setSupportChat] = useState([
     { type: "bot", text: "Olá! Como posso ajudá-lo hoje?" },
   ]);
   const [teamChat, setTeamChat] = useState([
     { type: "bot", text: "Chat da equipe - todos online" },
   ]);
-
-  const colunas = [
-    { chave: "id", label: "ID", sortable: true },
-    { chave: "nome", label: "Nome", sortable: true },
-    { chave: "tipo", label: "Tipo", sortable: true },
-    { chave: "apartamento", label: "Apartamento", sortable: true },
-    { chave: "acoes", label: "Ações", sortable: false },
-  ];
 
   const validModeActiveTab = (tabString: string) => activeTab === tabString;
 
@@ -157,6 +155,8 @@ const Dashboard = () => {
         },
       ];
 
+      setInputDataCond(dataCond);
+
       setMetricCard(objDataConfig);
       setMetricCondPie(pieFormatted);
       setMetricCondBar(infoGruposBar);
@@ -171,7 +171,6 @@ const Dashboard = () => {
       setLoading(false);
     }
   };
-
   const handleSupportMessage = (message) => {
     setSupportChat((prev) => [...prev, { type: "user", text: message }]);
     setTimeout(() => {
@@ -204,7 +203,7 @@ const Dashboard = () => {
     apart: "APARTAMENTO",
     people: "PESSOAS",
     gasmetros: "GASOMETROS",
-    analise: "analise",
+    cadastrar: "CADASTRAR",
   };
 
   return (
@@ -250,6 +249,11 @@ const Dashboard = () => {
           tableDataGas={tableDataGas}
         />
 
+        {validModeActiveTab("cadastrar") && (
+          <>
+            <Signup inputCond={inputDataCond} />
+          </>
+        )}
         {validModeActiveTab("overview") && (
           <>
             <div className="metrics-content">
@@ -299,17 +303,22 @@ const Dashboard = () => {
             </div>
           </>
         )}
-
-        {(validModeActiveTab("overview") || validModeActiveTab("details")) && (
+        {(validModeActiveTab("details") || validModeActiveTab("overview")) && (
           <div className="table-content">
             <h2>Dados</h2>
             <div className="tab-content">
               <Calendario />
-              <DataTable data={tableDataPeople} dataHead={colunas} />
+
+              <Tables
+                activeTab={activeTab}
+                tableDataTower={tableDataTower}
+                tableDataApart={tableDataApart}
+                tableDataPeople={tableDataPeople}
+                tableDataGas={tableDataGas}
+              />
             </div>
           </div>
         )}
-
         {(validModeActiveTab("data") || validModeActiveTab("overview")) && (
           <div className="table-content">
             <h2>Estatisticas</h2>
@@ -322,7 +331,6 @@ const Dashboard = () => {
             </div>
           </div>
         )}
-
         {(validModeActiveTab("chats") || validModeActiveTab("overview")) && (
           <div className="table-content">
             <h2>Chat</h2>

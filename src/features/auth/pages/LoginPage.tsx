@@ -132,8 +132,6 @@ export default function LoginPage({ isValid = (valid: boolean) => {} }) {
   const submitForm = (e: React.FormEvent<HTMLFormElement>) =>
     e.preventDefault();
 
-  const actionSingUp = () => (location.href = "/signup");
-
   useEffect(() => {
     fetch("http://localhost:8000/admin/login/?next=/admin/", {
       method: "post",
@@ -156,9 +154,7 @@ export default function LoginPage({ isValid = (valid: boolean) => {} }) {
               Tenha clareza e controle sobre os seus dados em poucos cliques,
               cadastre medidores, registre consumos e muito mais.
             </p>
-            <button onClick={() => actionSingUp()}>
-              Ir para tela de Cadastrar
-            </button>
+            <button>Veja mais...</button>
           </div>
         </div>
         <form

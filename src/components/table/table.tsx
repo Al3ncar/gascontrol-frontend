@@ -193,25 +193,16 @@ const DataTable = ({
     const response = await sendAxiosApi("put", dataApi, link);
 
     const newTable = tableDataArray.map((item) => {
-      const updatedTower = parentData.find((tower) => {
-        return item.torre === tower.id ? tower : item;
-      });
-
-      // const objRespoUpgrade = { ...response, ...updatedTower };
-
-      console.log("updatedTower", updatedTower);
-      // console.log(objRespoUpgrade);
-
       if (item.id === response.id) {
         return {
           ...item,
-          // objRespoUpgrade,
+          ...response,
         };
       }
       return item;
     });
 
-    // setTableDataArray(newTable);
+    setTableDataArray(newTable);
   };
 
   const handleCloseModal = () => {
@@ -490,73 +481,6 @@ const DataTable = ({
           </tbody>
         </table>
       </div>
-
-      {/* {totalPages > 1 && (
-        <div className={styles.pagination}>
-          <button
-            className={styles.paginationBtn}
-            onClick={() => currentPage > 1 && goToNextPage(currentPage - 1)}
-            disabled={currentPage === 1}
-          >
-            ← Anterior
-          </button>
-
-          <div className={styles.paginationPages}>
-            {(() => {
-              // Lógica para determinar quais páginas mostrar
-              let startPage, endPage;
-
-              if (totalPages <= 5) {
-                // Menos de 5 páginas: mostra todas
-                startPage = 1;
-                endPage = totalPages;
-              } else {
-                // Mais de 5 páginas: lógica de páginação
-                if (currentPage <= 3) {
-                  startPage = 1;
-                  endPage = 5;
-                } else if (currentPage >= totalPages - 2) {
-                  startPage = totalPages - 4;
-                  endPage = totalPages;
-                } else {
-                  startPage = currentPage - 2;
-                  endPage = currentPage + 2;
-                }
-              }
-
-              // Cria array de páginas
-              const pages = [];
-              for (let i = startPage; i <= endPage; i++) {
-                pages.push(i);
-              }
-
-              return pages.map((pageNum) => (
-                <button
-                  key={pageNum}
-                  className={`${styles.paginationPage} ${
-                    currentPage === pageNum ? styles.active : ""
-                  }`}
-                  onClick={() => goToNextPage(pageNum)}
-                >
-                  {pageNum}
-                </button>
-              ));
-            })()}
-          </div>
-
-          <button
-            className={styles.paginationBtn}
-            onClick={() =>
-              currentPage < totalPages && goToNextPage(currentPage + 1)
-            }
-            disabled={currentPage === totalPages}
-          >
-            Próxima →
-          </button>
-        </div>
-
-
-      )} */}
 
       {totalPages > 1 && (
         <div className={styles.pagination}>

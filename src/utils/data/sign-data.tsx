@@ -4,6 +4,8 @@ const inputFormData = (inputsValue: any, handleInputChange: any) => [
     className: "info",
     children: [
       {
+        staps: 3,
+
         label: "Nome Completo: ",
         type: "text",
         name: "name",
@@ -13,6 +15,8 @@ const inputFormData = (inputsValue: any, handleInputChange: any) => [
         onChange: (e: any) => handleInputChange(e),
       },
       {
+        staps: 3,
+
         label: "Relação com Imovél: ",
         type: "text",
         name: "email",
@@ -20,6 +24,12 @@ const inputFormData = (inputsValue: any, handleInputChange: any) => [
         id: "relation",
         value: inputsValue.relation,
         onChange: (e: any) => handleInputChange(e),
+        children: [
+          { id: 0, value: "", label: "Selecione" },
+          { id: 1, value: "DONO", label: " Dona/Dono" },
+          { id: 2, value: "MORADOR", label: " Moradora/Morador" },
+          { id: 3, value: "INQUILINO", label: " Inquilina/Inquilino" },
+        ],
       },
     ],
   },
@@ -28,24 +38,7 @@ const inputFormData = (inputsValue: any, handleInputChange: any) => [
     className: "info",
     children: [
       {
-        label: "Nome do Condominio: ",
-        type: "text",
-        name: "name",
-        placeholder: "Nome do Condominio...",
-        id: "condominiumName",
-        value: inputsValue.condominiumName,
-        onChange: (e: any) => handleInputChange(e),
-      },
-      {
-        label: "Localização do Condominio: ",
-        type: "text",
-        name: "name",
-        placeholder: "Cidade, UF...",
-        id: "condominiumLocation",
-        value: inputsValue.condominiumLocation,
-        onChange: (e: any) => handleInputChange(e),
-      },
-      {
+        staps: 1,
         label: "Identificação da Torre: ",
         type: "text",
         name: "name",
@@ -56,6 +49,7 @@ const inputFormData = (inputsValue: any, handleInputChange: any) => [
         onChange: (e: any) => handleInputChange(e),
       },
       {
+        staps: 1,
         label: "Numero da Torre: ",
         type: "text",
         name: "name",
@@ -65,6 +59,7 @@ const inputFormData = (inputsValue: any, handleInputChange: any) => [
         onChange: (e: any) => handleInputChange(e),
       },
       {
+        staps: 2,
         label: "Identificação do Apartamento: ",
         type: "text",
         name: "name",
@@ -74,6 +69,7 @@ const inputFormData = (inputsValue: any, handleInputChange: any) => [
         onChange: (e: any) => handleInputChange(e),
       },
       {
+        staps: 4,
         label: "Codigo do Gasometro: ",
         type: "text",
         name: "name",
