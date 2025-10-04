@@ -12,11 +12,15 @@ const DataTable = ({
   dataHead,
   itemsPerPage = 10,
   style = {},
+  parentData = [],
 }) => {
-  const [tableDataArray, setTableDataArray] = useState([]);
+  const [tableDataArray, setTableDataArray] = useState(data);
   const [currentPage, setCurrentPage] = useState(1);
   const [sortConfig, setSortConfig] = useState({ key: null, direction: "asc" });
   const [searchTerm, setSearchTerm] = useState("");
+
+  const [startIndex, setStartIndex] = useState(0);
+  const [endIndex, setEndIndex] = useState(itemsPerPage);
 
   const [isModalConfirm, setModalConfirm] = useState(false);
   const [isModalData, setModalData] = useState([]);
@@ -35,9 +39,13 @@ const DataTable = ({
     // analise: "analise",
   };
 
+  // useEffect(() => {
+  //   setTableDataArray(data);
+  // }, [data]);
+
   const filteredData = useMemo(() => {
-    if (!searchTerm) return data;
-    return data.filter((item) =>
+    if (!searchTerm) return tableDataArray;
+    return tableDataArray.filter((item) =>
       Object.values(item).some((value) =>
         value.toString().toLowerCase().includes(searchTerm.toLowerCase())
       )
@@ -134,9 +142,6 @@ const DataTable = ({
   };
 
   const handleConfirmEdit = (updatedData) => {
-    console.log("updatedData", updatedData);
-    // const getDataOpen = currentData.find((item) => item.id === Number(id));
-
     const typeApis: string = {
       condominio: "condominio",
       torres: "torres",
@@ -145,6 +150,8 @@ const DataTable = ({
       gasometros: "gasometros",
     };
 
+    console.log("parentData", parentData);
+    console.log("updatedData", updatedData);
     const newUpdated = updatedData.map((item) => {
       if (typeApis[updatedData[0].typeRender] === "torres") {
         return {
@@ -170,27 +177,41 @@ const DataTable = ({
         };
       } else return;
     });
-    console.log("newUpdated", newUpdated);
 
     const linkApi = `${typeApis[updatedData[0].typeRender]}/${
       updatedData[0].id
     }`;
-    editData(newUpdated[0], linkApi);
+
+    editData(
+      newUpdated[0],
+      linkApi,
+      typeApis[updatedData[0].typeRender] === "apartamentos"
+    );
   };
 
-  const editData = async (dataApi, link) => {
+  const editData = async (dataApi, link, apartValid) => {
     const response = await sendAxiosApi("put", dataApi, link);
 
     const newTable = tableDataArray.map((item) => {
+      const updatedTower = parentData.find((tower) => {
+        return item.torre === tower.id ? tower : item;
+      });
+
+      // const objRespoUpgrade = { ...response, ...updatedTower };
+
+      console.log("updatedTower", updatedTower);
+      // console.log(objRespoUpgrade);
+
       if (item.id === response.id) {
         return {
           ...item,
-          ...response,
+          // objRespoUpgrade,
         };
       }
       return item;
     });
-    setTableDataArray(newTable);
+
+    // setTableDataArray(newTable);
   };
 
   const handleCloseModal = () => {
@@ -204,10 +225,6 @@ const DataTable = ({
     currentPage * itemsPerPage
   );
 
-  useEffect(() => {
-    setTableDataArray(currentData);
-  }, []);
-
   const handleSort = (key) => {
     setSortConfig((prev) => ({
       key,
@@ -215,8 +232,20 @@ const DataTable = ({
     }));
   };
 
-  const goToPage = (page) => {
+  const goToNextPage = (page) => {
+    const startIndex = (page - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+
+    setEndIndex(endIndex);
+    setStartIndex(startIndex);
     setCurrentPage(Math.max(1, Math.min(page, totalPages)));
+  };
+
+  const goToBackPage = (currentPage) => {
+    if (currentPage > 1) {
+      return goToNextPage(currentPage - 1);
+    }
+    return goToNextPage(currentPage);
   };
 
   const renderSortIcon = (key) => {
@@ -237,26 +266,12 @@ const DataTable = ({
     }
   };
 
-  // const formatCurrency = (value) => {
-  //   return new Intl.NumberFormat("pt-BR", {
-  //     style: "currency",
-  //     currency: "BRL",
-  //   }).format(value);
-  // };
-
-  // const formatDate = (dateString) => {
-  //   return new Date(dateString).toLocaleDateString("pt-BR");
-  // };
-
   const openConfirmDelete = (e) => {
     const { id } = e.target;
 
     const getDataOpen = currentData.find((item) => item.id === Number(id));
     setModalData(getDataOpen);
     setModalConfirm(!!getDataOpen);
-
-    console.log(id);
-    console.log(getDataOpen);
   };
 
   const openConfirmEdit = (e) => {
@@ -275,7 +290,6 @@ const DataTable = ({
 
     setIsModalOpen(true);
     setModalInputs(dataFieds);
-    console.log("getDataOpen", getDataOpen);
   };
 
   const deleteDataTable = async (e) => {
@@ -356,7 +370,7 @@ const DataTable = ({
           </thead>
           <tbody>
             {tableDataArray && tableDataArray.length > 0 ? (
-              tableDataArray.map((item) => (
+              tableDataArray.slice(startIndex, endIndex).map((item) => (
                 <tr key={item.id} className={styles.tableRow}>
                   <td className={styles.tableCell}>{item.id}</td>
                   {type === "gasmetros" && (
@@ -481,7 +495,7 @@ const DataTable = ({
         <div className={styles.pagination}>
           <button
             className={styles.paginationBtn}
-            onClick={() => currentPage > 1 && goToPage(currentPage - 1)}
+            onClick={() => currentPage > 1 && goToNextPage(currentPage - 1)}
             disabled={currentPage === 1}
           >
             ← Anterior
@@ -522,7 +536,7 @@ const DataTable = ({
                   className={`${styles.paginationPage} ${
                     currentPage === pageNum ? styles.active : ""
                   }`}
-                  onClick={() => goToPage(pageNum)}
+                  onClick={() => goToNextPage(pageNum)}
                 >
                   {pageNum}
                 </button>
@@ -533,7 +547,7 @@ const DataTable = ({
           <button
             className={styles.paginationBtn}
             onClick={() =>
-              currentPage < totalPages && goToPage(currentPage + 1)
+              currentPage < totalPages && goToNextPage(currentPage + 1)
             }
             disabled={currentPage === totalPages}
           >
@@ -548,7 +562,7 @@ const DataTable = ({
         <div className={styles.pagination}>
           <button
             className={styles.paginationBtn}
-            onClick={() => goToPage(currentPage - 1)}
+            onClick={() => goToBackPage(currentPage)}
             disabled={currentPage === 1}
           >
             ← Anterior
@@ -573,7 +587,7 @@ const DataTable = ({
                   className={`${styles.paginationPage} ${
                     currentPage === pageNum ? styles.active : ""
                   }`}
-                  onClick={() => goToPage(pageNum)}
+                  onClick={() => goToNextPage(pageNum)}
                 >
                   {pageNum}
                 </button>
@@ -583,7 +597,7 @@ const DataTable = ({
 
           <button
             className={styles.paginationBtn}
-            onClick={() => goToPage(currentPage + 1)}
+            onClick={() => goToNextPage(currentPage + 1)}
             disabled={currentPage === totalPages}
           >
             Próxima →

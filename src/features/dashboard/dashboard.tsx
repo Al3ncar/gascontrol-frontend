@@ -1,4 +1,3 @@
-// components/MetricCard.jsx
 import { useEffect, useMemo, useState } from "react";
 import "../../scss/styles/dashboards/dashboard.scss";
 import Logo from "../../assets/logo/logo-1.png";

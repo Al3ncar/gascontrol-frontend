@@ -56,8 +56,6 @@ const Tables = ({
     { chave: "", label: "", sortable: false },
   ];
 
- 
-
   const validModeActiveTab = (tabString: string) => activeTab === tabString;
 
   const renderTableTower = async () => {
@@ -103,7 +101,6 @@ const Tables = ({
 
     setTableApartData(groupByTableData);
     renderTablePeople(newGroup);
-    // renderTableGas(newGroup)
   };
   const renderTablePeople = (apartmentData) => {
     const groupByTableData = tableDataPeople.map((people) => {
@@ -111,7 +108,6 @@ const Tables = ({
         return apt.id === people.apartamento;
       });
 
-      console.log("childrenDaTorre", childrenDaTorre);
       return {
         ...people,
         identificacao: childrenDaTorre[0].identificacao,
@@ -128,7 +124,6 @@ const Tables = ({
         return apt.id === people.apartamento;
       });
 
-      console.log("childrenDaTorre", childrenDaTorre);
       return {
         ...people,
         identificacao: childrenDaTorre[0].identificacao,
@@ -136,7 +131,6 @@ const Tables = ({
       };
     });
 
-    console.log(groupByTableData);
     setTableGasData(groupByTableData);
   };
 
@@ -173,6 +167,7 @@ const Tables = ({
                 titleTable="TABELA DE APARTAMENTOS"
                 style={{ width: "100%" }}
                 data={tableApartData}
+                parentData={tableCondData}
                 dataHead={tableHeadApart}
               />
             </div>
@@ -200,7 +195,7 @@ const Tables = ({
             <div className="tab-content">
               <DataTable
                 type="gasmetros"
-                titleTable="Tabela de Gasometros"
+                titleTable="TABELA DE GASOMETROS"
                 style={{ width: "100%" }}
                 data={tableGasData}
                 dataHead={tableHeadGas}

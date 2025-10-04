@@ -12,7 +12,6 @@ const EditModal = ({ isOpen, onClose, onConfirm, data, fields }) => {
 
   useEffect(() => {
     setFormDataInput(fields);
-    console.log(fields);
   }, [fields]);
 
   useEffect(() => {
